@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>로이스 2 임원단 모임</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap');
+        
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 10px;
+            text-align: center;
+            background-color: #f0f2f5;
+        }
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin: 10px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .title-container {
+            background: linear-gradient(to right, #FF8FE7, #9C27B0);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(156, 39, 176, 0.2);
+        }
+        .church-name {
+            color: white;
+            margin-bottom: 5px;
+            font-size: 1.2em;
+            font-weight: 700;
+        }
+        .main-title {
+            color: white;
+            margin: 10px 0;
+            font-size: 1.5em;
+            font-weight: 700;
+            line-height: 1.4;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        @media (min-width: 768px) {
+            .main-title {
+                font-size: 2em;
+            }
+            .church-name {
+                font-size: 1.5em;
+            }
+        }
+        .year {
+            color: #FFE082;
+            font-weight: 700;
+            font-size: 1.1em;
+        }
+        .sparkle {
+            font-size: 1.2em;
+            margin: 0 3px;
+        }
+        button {
+            padding: 15px 30px;
+            font-size: 1.1em;
+            background: linear-gradient(to right, #FF8FE7, #9C27B0);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+            width: 80%;
+            max-width: 300px;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(156, 39, 176, 0.3);
+        }
+        button:active {
+            transform: translateY(0);
+        }
+        .result {
+            margin: 20px 10px;
+            padding: 15px;
+            border-radius: 10px;
+            background-color: #f8f9fa;
+            transition: all 0.3s ease;
+        }
+        .result h3 {
+            font-size: 1.3em;
+            margin: 10px 0;
+            color: #9C27B0;
+        }
+        .result p {
+            font-size: 1.1em;
+            line-height: 1.5;
+            margin: 10px 0;
+            padding: 0 10px;
+        }
+        .history {
+            margin-top: 20px;
+            text-align: left;
+            padding: 15px;
+        }
+        .history h3 {
+            color: #9C27B0;
+            margin-bottom: 10px;
+            font-size: 1.2em;
+        }
+        .history-item {
+            padding: 10px;
+            border-bottom: 1px solid #dee2e6;
+            font-size: 1em;
+            line-height: 1.4;
+        }
+        .used-questions {
+            margin: 15px 0;
+            font-size: 1em;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="title-container">
+            <div class="church-name">명성교회</div>
+            <h1 class="main-title">
+                <span class="sparkle">✨</span>
+                지성과 미모의 집합체
+                <span class="sparkle">✨</span>
+                <br>
+                로이스 2
+                <br>
+                <span class="year">2025년</span> 임원단 모임
+            </h1>
+        </div>
+        <button onclick="matchRandom()" id="matchButton">랜덤 매칭</button>
+        <div id="result" class="result">
+            <p>버튼을 클릭하여 랜덤 매칭을 시작하세요.</p>
+        </div>
+        <div class="used-questions">
+            남은 매칭: <span id="remainingMatches">8</span>개
+        </div>
+        <div class="history">
+            <h3>📝 매칭 기록</h3>
+            <div id="matchHistory"></div>
+        </div>
+    </div>
+
+    <script>
+        const participants = [
+            "한애란", "김봄", "이미란", "이선희",
+            "오지은", "소리나", "문정화", "이윤서"
+        ];
+
+        const questions = [
+            "예상치 못한 축복이나 은혜를 받았던 일이 있다면 무엇인가요?",
+            "자녀와의 대화에서 가장 감동받았던 순간은 언제였나요?",
+            "여가 시간에 가장 즐겨 하는 활동이나 취미는 무엇인가요?",
+            "가족과 함께 시간을 보낼 때 가장 좋아하는 활동은 무엇인가요?",
+            "요즘 가장 즐겨 먹는 음식이나 추천하고 싶은 음식이 있다면 무엇인가요?",
+            "요즘 가장 많이 사용하는 앱은 무엇인가요?",
+            "커피를 마신다면, 어떤 스타일을 가장 좋아하세요?",
+            "보통 외출할 때 꼭 챙기는 물건은 무엇인가요?"
+        ];
+
+        let availableParticipants = [...participants];
+        let availableQuestions = [...questions];
+        let matchHistory = [];
+
+        function matchRandom() {
+            if (availableParticipants.length === 0) {
+                alert('모든 매칭이 완료되었습니다!');
+                if (confirm('처음부터 다시 시작하시겠습니까?')) {
+                    resetAll();
+                }
+                return;
+            }
+
+            // 랜덤 참가자와 질문 선택
+            const randomParticipantIndex = Math.floor(Math.random() * availableParticipants.length);
+            const randomQuestionIndex = Math.floor(Math.random() * availableQuestions.length);
+            
+            const randomParticipant = availableParticipants[randomParticipantIndex];
+            const randomQuestion = availableQuestions[randomQuestionIndex];
+
+            // 선택된 참가자와 질문 제거
+            availableParticipants.splice(randomParticipantIndex, 1);
+            availableQuestions.splice(randomQuestionIndex, 1);
+            
+            // 결과 표시 및 애니메이션
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = `
+                <h3>${randomParticipant}</h3>
+                <p>질문: ${randomQuestion}</p>
+            `;
+            resultDiv.classList.add('highlight');
+            setTimeout(() => resultDiv.classList.remove('highlight'), 300);
+
+            // 매칭 기록 추가
+            matchHistory.unshift({ participant: randomParticipant, question: randomQuestion });
+            updateHistory();
+            updateRemainingMatches();
+
+            // 모든 매칭이 완료되었는지 확인
+            if (availableParticipants.length === 0) {
+                document.getElementById('matchButton').disabled = true;
+                document.getElementById('matchButton').textContent = '매칭 완료';
+            }
+        }
+
+        function resetAll() {
+            availableParticipants = [...participants];
+            availableQuestions = [...questions];
+            matchHistory = [];
+            document.getElementById('matchButton').disabled = false;
+            document.getElementById('matchButton').textContent = '랜덤 매칭';
+            document.getElementById('result').innerHTML = '<p>버튼을 클릭하여 랜덤 매칭을 시작하세요.</p>';
+            document.getElementById('matchHistory').innerHTML = '';
+            updateRemainingMatches();
+        }
+
+        function updateHistory() {
+            const historyDiv = document.getElementById('matchHistory');
+            historyDiv.innerHTML = matchHistory.map((match, index) => `
+                <div class="history-item">
+                    ${matchHistory.length - index}. ${match.participant} - ${match.question}
+                </div>
+            `).join('');
+        }
+
+        function updateRemainingMatches() {
+            document.getElementById('remainingMatches').textContent = 
+                availableParticipants.length;
+        }
+    </script>
+</body>
+</html>
